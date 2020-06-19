@@ -8,6 +8,12 @@
 #include "nfd.h"
 #include "nfd_common.h"
 
+void append(char* s, char c) {
+        int len = strlen(s);
+        s[len] = c;
+        s[len+1] = '\0';
+}
+
 static NSArray *BuildAllowedFileTypes( const char *filterList )
 {
     // Commas and semicolons are the same thing on this platform
@@ -17,25 +23,18 @@ static NSArray *BuildAllowedFileTypes( const char *filterList )
     char typebuf[NFD_MAX_STRLEN] = {0};
     
     size_t filterListLen = strlen(filterList);
-    char *p_typebuf = typebuf;
+    
     for ( size_t i = 0; i < filterListLen+1; ++i )
     {
         if ( filterList[i] == ',' || filterList[i] == ';' || filterList[i] == '\0' )
         {
-            if (filterList[i] != '\0')
-                ++p_typebuf;
-            *p_typebuf = '\0';
-
             NSString *thisType = [NSString stringWithUTF8String: typebuf];
             [buildFilterList addObject:thisType];
-            p_typebuf = typebuf;
-            *p_typebuf = '\0';
+            strcpy(typebuf, "");
         }
         else
         {
-            *p_typebuf = filterList[i];
-            ++p_typebuf;
-
+            append(typebuf, filterList[i]);
         }
     }
 
